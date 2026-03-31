@@ -88,6 +88,7 @@ class BattleshipGame:
 
         self.game_started = False
         self.game_over = False
+        self.waiting_for_computer_shot = False
 
         # Velikost celice v piksljih za prikaz segmenta ladje.
         self.cell_px = 20
@@ -110,6 +111,9 @@ class BattleshipGame:
 
         # Naloži slike ladij (ena slika čez več celic, tudi navpično).
         self.ship_images = self.load_ship_images()
+        self.hit_ship_images = self.load_ship_images(hit_variant=True)
+        if not self.hit_ship_images:
+            self.hit_ship_images = self.ship_images
         self.fire_image = self.load_fire_image()
 
         # Stabilen layout: 3 stolpci (igralec | ločnica | računalnik).
@@ -175,6 +179,7 @@ class BattleshipGame:
 
         self.player_shot_markers = {}
         self.computer_shot_markers = {}
+        self.revealed_computer_ships = set()
 
     def draw_grid(self, canvas, water_color):
         canvas.delete("all")
@@ -214,7 +219,7 @@ class BattleshipGame:
         return "break"
 
     def on_computer_canvas_click(self, event):
-        if (not self.game_started) or self.game_over:
+        if (not self.game_started) or self.game_over or self.waiting_for_computer_shot:
             return "break"
         cell = self.event_to_cell(event)
         if cell is None:
@@ -223,14 +228,15 @@ class BattleshipGame:
         self.player_shoot(row, col)
         return "break"
 
-    def load_ship_images(self):
+    def load_ship_images(self, hit_variant=False):
         images = {}
         base_dir = Path(__file__).parent
 
         for length in sorted(set(self.ships)):
-            filename = f"ladja{length}x1.png"
+            suffix = "_zadeta" if hit_variant else ""
+            filename = f"ladja{length}x1{suffix}.png"
             path = base_dir / filename
-            if not path.exists() and length == 5:
+            if not hit_variant and not path.exists() and length == 5:
                 fallback = base_dir / "ship.png"
                 if fallback.exists():
                     path = fallback
@@ -340,6 +346,8 @@ class BattleshipGame:
 
     def draw_ship(self, canvas, row, col, ship_length, direction, tag):
         img = self.ship_images.get((ship_length, direction))
+        if tag.startswith("player_ship_sunk_") or tag.startswith("computer_ship_sunk_"):
+            img = self.hit_ship_images.get((ship_length, direction), img)
         x = col * self.cell_px
         y = row * self.cell_px
         if img is not None:
@@ -392,7 +400,10 @@ class BattleshipGame:
             top_id = canvas.create_image(image_x, image_y, image=self.fire_image, anchor="nw", tags=("shot",))
             marker_dict[key] = (under_id, top_id)
             canvas.tag_raise("shot")
-            canvas.tag_lower("shot_under", "ship")
+            if canvas.find_withtag("ship"):
+                canvas.tag_lower("shot_under", "ship")
+            else:
+                canvas.tag_lower("shot_under")
             return
 
         color = "red" if hit else "white"
@@ -402,6 +413,89 @@ class BattleshipGame:
         if direction == "H":
             return [(row, col + i) for i in range(ship_length)]
         return [(row + i, col) for i in range(ship_length)]
+
+    def get_ship_placement_by_cell(self, placements, row, col):
+        for idx, (ship_row, ship_col, ship_length, direction) in enumerate(placements):
+            if (row, col) in self.get_ship_cells(ship_row, ship_col, ship_length, direction):
+                return idx, ship_row, ship_col, ship_length, direction
+        return None
+
+    def mark_player_ship_sunk(self, row, col):
+        ship_info = self.get_ship_placement_by_cell(self.player_ship_placements, row, col)
+        if ship_info is None:
+            return None
+
+        idx, ship_row, ship_col, ship_length, direction = ship_info
+        ship_cells = self.get_ship_cells(ship_row, ship_col, ship_length, direction)
+        if not all(self.player_primary_grid[r][c] == -1 for r, c in ship_cells):
+            return None
+
+        original_tag = f"player_ship_{idx}"
+        sunk_tag = f"player_ship_sunk_{idx}"
+        self.player_canvas.delete(original_tag)
+        self.player_canvas.delete(sunk_tag)
+        self.draw_ship(self.player_canvas, ship_row, ship_col, ship_length, direction, tag=sunk_tag)
+        return ship_length
+
+    def mark_computer_ship_sunk(self, row, col):
+        ship_info = self.get_ship_placement_by_cell(self.computer_ship_placements, row, col)
+        if ship_info is None:
+            return None
+
+        idx, ship_row, ship_col, ship_length, direction = ship_info
+        if idx in self.revealed_computer_ships:
+            return None
+
+        ship_cells = self.get_ship_cells(ship_row, ship_col, ship_length, direction)
+        if not all(self.computer_primary_grid[r][c] == -1 for r, c in ship_cells):
+            return None
+
+        for r, c in ship_cells:
+            marker = self.computer_shot_markers.pop((r, c), None)
+            if isinstance(marker, tuple) and len(marker) == 2:
+                under_id, top_id = marker
+                self.computer_canvas.delete(under_id)
+                self.computer_canvas.delete(top_id)
+            elif isinstance(marker, int):
+                self.computer_canvas.delete(marker)
+
+        sunk_tag = f"computer_ship_sunk_{idx}"
+        self.computer_canvas.delete(sunk_tag)
+        base_img = self.ship_images.get((ship_length, direction))
+        hit_img = self.hit_ship_images.get((ship_length, direction))
+        x = ship_col * self.cell_px
+        y = ship_row * self.cell_px
+        if base_img is not None:
+            self.computer_canvas.create_image(x, y, image=base_img, anchor="nw", tags=(sunk_tag,))
+        if hit_img is not None:
+            self.computer_canvas.create_image(x, y, image=hit_img, anchor="nw", tags=(sunk_tag,))
+        if base_img is None and hit_img is None:
+            if direction == "H":
+                self.computer_canvas.create_rectangle(
+                    x,
+                    y,
+                    x + ship_length * self.cell_px,
+                    y + self.cell_px,
+                    fill="darkgreen",
+                    outline="black",
+                    width=2,
+                    tags=(sunk_tag,),
+                )
+            else:
+                self.computer_canvas.create_rectangle(
+                    x,
+                    y,
+                    x + self.cell_px,
+                    y + ship_length * self.cell_px,
+                    fill="darkgreen",
+                    outline="black",
+                    width=2,
+                    tags=(sunk_tag,),
+                )
+
+        self.computer_canvas.tag_raise(sunk_tag)
+        self.revealed_computer_ships.add(idx)
+        return ship_length
 
     # Postavi ladjico igralca
     def place_player_ship(self, row, col, direction):
@@ -453,24 +547,46 @@ class BattleshipGame:
     def player_shoot(self, row, col):
         if self.player_target_grid[row][col] != 0:
             return  # Polje je že zadeto
+        sunk_length = None
         if self.computer_primary_grid[row][col] == 1:
             self.draw_shot_marker(self.computer_canvas, self.computer_shot_markers, row, col, hit=True)
             self.player_target_grid[row][col] = 1
             self.computer_primary_grid[row][col] = -1
+            sunk_length = self.mark_computer_ship_sunk(row, col)
+            if sunk_length is not None:
+                sunk_message = f"Potopljena računalnikova ladja dolžine {sunk_length}"
+                print(sunk_message, flush=True)
+                self.instructions.config(text=sunk_message)
+                self.root.update_idletasks()
         else:
             self.draw_shot_marker(self.computer_canvas, self.computer_shot_markers, row, col, hit=False)
             self.player_target_grid[row][col] = -1
 
         if all_ships_sunk(self.computer_primary_grid):
-            self.instructions.config(text="Čestitke! Zmagal si!")
+            winner_message = "Zmagovalec: Igralec"
+            print(winner_message)
+            self.instructions.config(text=winner_message)
             self.disable_all_buttons()
             return
 
-        self.computer_shoot()
+        self.waiting_for_computer_shot = True
+        if sunk_length is not None:
+            # Pusti sporočilo potopitve vidno na istem mestu kot navodila.
+            self.root.after(3000, lambda: self.delayed_computer_shoot(preserve_message=True))
+            return
+
+        self.root.after(300, lambda: self.delayed_computer_shoot(preserve_message=False))
+
+    def delayed_computer_shoot(self, preserve_message=False):
+        try:
+            self.computer_shoot(preserve_message=preserve_message)
+        finally:
+            self.waiting_for_computer_shot = False
 
     # Računalnik strelja
-    def computer_shoot(self):
-        self.instructions.config(text="Računalnik strelja...")
+    def computer_shoot(self, preserve_message=False):
+        if not preserve_message:
+            self.instructions.config(text="Računalnik strelja...")
         while True:
             row = random.randint(0, 9)
             col = random.randint(0, 9)
@@ -479,17 +595,28 @@ class BattleshipGame:
                     self.draw_shot_marker(self.player_canvas, self.player_shot_markers, row, col, hit=True)
                     self.computer_target_grid[row][col] = 1
                     self.player_primary_grid[row][col] = -1
+                    sunk_length = self.mark_player_ship_sunk(row, col)
                 else:
                     self.draw_shot_marker(self.player_canvas, self.player_shot_markers, row, col, hit=False)
                     self.computer_target_grid[row][col] = -1
+                    sunk_length = None
                 break
 
         if all_ships_sunk(self.player_primary_grid):
-            self.instructions.config(text="Računalnik je zmagal!")
+            winner_message = "Zmagovalec: Računalnik"
+            print(winner_message)
+            self.instructions.config(text=winner_message)
             self.disable_all_buttons()
             return
 
-        self.instructions.config(text="Tvoj na vrsti! Klikni na računalnikovo mrežo.")
+        if sunk_length is not None:
+            sunk_message = f"Potopljena ladja dolžine {sunk_length}"
+            print(sunk_message)
+            self.instructions.config(text=sunk_message)
+            return
+
+        if not preserve_message:
+            self.instructions.config(text="Tvoj na vrsti! Klikni na računalnikovo mrežo.")
 
     # Onemogoči vse gumbe (po koncu igre)
     def disable_all_buttons(self):
