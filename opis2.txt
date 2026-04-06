@@ -1,0 +1,77 @@
+Odlično, spodaj imaš dodatna dva sklopa za seminarsko: Navodila igrice in bolj “praktičen”, korak-po-koraku opis izdelave.
+
+**Navodila igrice (za uporabnika)**
+
+Namen igre:
+Cilj je potopiti vse nasprotnikove ladje, preden nasprotnik potopi tvoje.
+
+Priprava:
+1. Ob zagonu se prikažeta dve mreži:
+2. Leva mreža je igralčeva.
+3. Desna mreža je računalnikova.
+4. Igralec najprej postavi svoje ladje dolžin 5, 4, 3, 3 in 2.
+
+Postavljanje ladij:
+1. Levi klik postavi ladjo navpično.
+2. Desni klik postavi ladjo vodoravno.
+3. Ladje se ne smejo prekrivati.
+4. Ladje morajo biti v celoti znotraj mreže.
+5. Ko so vse ladje postavljene, se aktivira gumb Začni igro.
+
+Potek igre:
+1. Igralec strelja s klikom na desno (računalnikovo) mrežo.
+2. Po vsakem igralčevem strelu strelja tudi računalnik.
+3. V isto polje ni možno streljati dvakrat.
+4. Zadetki so označeni z ognjem.
+5. Pri računalniku se ladja prikaže, ko je v celoti potopljena.
+6. Igra se konča, ko ena stran nima več nepoškodovanih ladij.
+
+Vizualni znaki:
+1. Ogenj pomeni zadetek.
+2. Belo polje pomeni zgrešen strel.
+3. Besedilo pod mrežo prikazuje trenutno stanje in potek igre.
+
+**Opis izdelave programa (bolj podoben realnemu procesu)**
+
+Pri izdelavi igre sem sledil postopnemu razvoju po fazah.
+
+1. Faza načrtovanja
+Najprej sem določil pravila igre in podatkovni model. Odločil sem se za štiri ločene mreže, ker to poenostavi logiko streljanja, preverjanje ponovljenih potez in detekcijo konca igre.
+
+2. Faza osnovne logike
+Najprej sem implementiral funkcije za:
+1. ustvarjanje prazne mreže,
+2. preverjanje dovoljene postavitve ladje,
+3. postavljanje ladje,
+4. preverjanje, ali so vse ladje potopljene.
+S tem sem dobil delujoče jedro igre še pred grafičnim vmesnikom.
+
+3. Faza grafičnega vmesnika
+Nato sem dodal Tkinter vmesnik z dvema platnoma. Za prikaz ladij sem uporabil slike, ki se prilagodijo velikosti celic in orientaciji (vodoravno/navpično). V tej fazi sem povezal klike miške s postavitvijo ladij in streljanjem.
+
+4. Faza poteka igre
+Po vzpostavitvi vmesnika sem dodal zaporedje potez:
+1. igralec strelja,
+2. preveri se zadetek/potopitev/zmaga,
+3. računalnik izvede svoj strel,
+4. ponovno preverjanje stanja.
+Dodana je bila tudi kratka zakasnitev računalnikove poteze, da je igra bolj pregledna.
+
+5. Faza izboljšav prikaza
+V zaključni fazi sem izboljšal uporabniško izkušnjo:
+1. zadetke sem prikazal z ognjem,
+2. ogenj ostane viden tudi ob potopitvi ladje,
+3. sliko ognja sem pomanjšal in centriral,
+4. računalnikove ladje ostanejo skrite do potopitve,
+5. dodana so jasna sprotna obvestila v spodnjem delu okna.
+
+6. Faza testiranja
+Program sem testiral s ponavljanjem tipičnih scenarijev:
+1. pravilna in nepravilna postavitev ladij,
+2. kliki izven mreže,
+3. ponovni strel v isto celico,
+4. potopitev ladje,
+5. konec igre in razglasitev zmagovalca.
+Na podlagi testov sem odpravil težave s sloji izrisa (ladja proti ognju) in izboljšal preglednost prikaza.
+
+Če želiš, ti pripravim še naslednji del seminarske: Tehnične težave in rešitve (problem-solution), napisan v istem slogu.

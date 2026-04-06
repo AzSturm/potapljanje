@@ -1,0 +1,174 @@
+Super tema za seminarsko. Najprej iz kode izluščim načrt (arhitekturo) in seznam funkcij z njihovimi prototipi, potem ti pripravim že skoraj končen tekst, ki ga lahko vstaviš v nalogo.
+
+Ran terminal command:  rg -n "^(def |class )" test4.py
+Completed with input:  rg -n "^(def |class )" test4.py
+
+Ker v sistemu ni rg, uporabim grep in izpišem točne vrstice definicij; rezultat bom nato strukturiral v poglavja za seminarsko.
+
+Ran terminal command:  grep -nE "^(def |class )" test4.py
+
+Ran terminal command:  grep -nE "^[[:space:]]+def " test4.py
+
+Spodaj je pripravljen osnutek za seminarsko nalogo: najprej načrtovanje, nato funkcionalnosti, nato opis funkcij in prototipi.
+
+**1. Načrtovanje programa**
+
+Program je bil načrtovan kot enostavna namizna igra Potapljanje ladjic z grafičnim vmesnikom Tkinter. Arhitektura je razdeljena na:
+
+1. Podatkovni del (stanja mrež in logika igre)
+2. Grafični del (dve platni, izris mreže, ladij, zadetkov)
+3. Krmilni del (obdelava klikov, potek potez, menjava igralec/računalnik)
+
+Ključna ideja načrta je uporaba ločenih mrež:
+1. Primarna mreža igralca: hrani položaje igralčevih ladij in prejete zadetke
+2. Primarna mreža računalnika: hrani položaje računalnikovih ladij in prejete zadetke
+3. Tarčna mreža igralca: hrani, kam je igralec že streljal
+4. Tarčna mreža računalnika: hrani, kam je računalnik že streljal
+
+Takšna delitev prepreči podvajanje stanj in poenostavi preverjanje pravil:
+1. Ali je strel na novo polje
+2. Ali je zadetek ali zgrešeno
+3. Ali je ladja potopljena
+4. Ali je igre konec
+
+Za vizualni del je bil načrt:
+1. Ladje se rišejo kot slike čez več celic
+2. Zadetki so prikazani z ognjem
+3. Pri računalniku se ladja razkrije šele, ko je potopljena
+4. Ogenj ostane viden tudi po razkritju ladje
+
+**2. Funkcionalnosti igre**
+
+Program omogoča naslednje funkcije:
+
+1. Ročno postavljanje igralčevih ladij z miško
+2. Naključno postavljanje računalnikovih ladij
+3. Izmenično streljanje igralec-računalnik
+4. Preverjanje veljavnosti potez (ni ponovnega streljanja v isto celico)
+5. Detekcija zadetka, zgrešenega strela in potopitve ladje
+6. Vizualni prikaz zadetkov z ognjem
+7. Razglasitev zmagovalca in zaključek igre
+
+Implementacija je v enem razredu test4.py, pomožne logične funkcije pa so definirane na začetku datoteke.
+
+**3. Prototipi funkcij**
+
+Modulne funkcije:
+1. create_grid(size=10) test4.py
+2. can_place_ship(grid, row, col, length, direction) test4.py
+3. placement_block_reason(grid, row, col, length, direction) test4.py
+4. place_ship(grid, row, col, length, direction) test4.py
+5. all_ships_sunk(grid) test4.py
+
+Metode razreda BattleshipGame:
+1. __init__(self, root) test4.py
+2. draw_grid(self, canvas, water_color) test4.py
+3. event_to_cell(self, event) test4.py
+4. on_player_canvas_click(self, event, direction) test4.py
+5. on_computer_canvas_click(self, event) test4.py
+6. load_ship_images(self, hit_variant=False) test4.py
+7. load_fire_image(self) test4.py
+8. draw_ship(self, canvas, row, col, ship_length, direction, tag) test4.py
+9. draw_shot_marker(self, canvas, marker_dict, row, col, hit) test4.py
+10. get_ship_cells(self, row, col, ship_length, direction) test4.py
+11. get_ship_placement_by_cell(self, placements, row, col) test4.py
+12. mark_player_ship_sunk(self, row, col) test4.py
+13. mark_computer_ship_sunk(self, row, col) test4.py
+14. place_player_ship(self, row, col, direction) test4.py
+15. start_game(self) test4.py
+16. player_shoot(self, row, col) test4.py
+17. delayed_computer_shoot(self, preserve_message=False) test4.py
+18. computer_shoot(self, preserve_message=False) test4.py
+19. disable_all_buttons(self) test4.py
+
+**4. Opis funkcij (za seminarsko)**
+
+1. create_grid(size=10)
+Namen: ustvari prazno kvadratno mrežo.
+Vhod: size, privzeto 10.
+Izhod: 2D seznam velikosti size x size z vrednostmi 0.
+
+2. can_place_ship(grid, row, col, length, direction)
+Namen: preveri, ali je ladjo dovoljeno postaviti na dano pozicijo.
+Vhod: mreža, začetna vrstica/stolpec, dolžina ladje, smer H ali V.
+Izhod: True ali False.
+
+3. placement_block_reason(grid, row, col, length, direction)
+Namen: vrne razlog, zakaj postavitev ni možna.
+Izhod: besedilo, npr. izven mreže ali prekriva drugo ladjo.
+
+4. place_ship(grid, row, col, length, direction)
+Namen: dejansko zapiše ladjo v mrežo.
+Logika: ustrezne celice nastavi na 1.
+
+5. all_ships_sunk(grid)
+Namen: preveri konec igre na izbrani mreži.
+Izhod: True, ko ni več celic z vrednostjo 1.
+
+6. __init__(self, root)
+Namen: inicializacija celotne igre.
+Kaj nastavi: mreže, sezname ladij, stanje igre, grafični vmesnik, nalaganje slik.
+
+7. draw_grid(self, canvas, water_color)
+Namen: nariše ozadje in mrežne črte 10 x 10.
+
+8. event_to_cell(self, event)
+Namen: pretvori položaj klika miške v indeks celice.
+Izhod: par row, col ali None, če je klik izven.
+
+9. on_player_canvas_click(self, event, direction)
+Namen: obdelava klika pri postavitvi igralčevih ladij.
+
+10. on_computer_canvas_click(self, event)
+Namen: obdelava klika na računalnikovo mrežo med igro.
+
+11. load_ship_images(self, hit_variant=False)
+Namen: naloži slike ladij in jih prilagodi velikosti celic.
+Podpora: horizontalna in vertikalna orientacija, z fallback možnostmi.
+
+12. load_fire_image(self)
+Namen: naloži in pomanjša sliko ognja za zadetek.
+
+13. draw_ship(self, canvas, row, col, ship_length, direction, tag)
+Namen: nariše ladjo (slika ali rezervni pravokotnik).
+
+14. draw_shot_marker(self, canvas, marker_dict, row, col, hit)
+Namen: nariše marker strela.
+Posebnost: ob zadetku nariše ogenj, ki je slojno usklajen z ladjo.
+
+15. get_ship_cells(self, row, col, ship_length, direction)
+Namen: vrne seznam vseh celic, ki jih pokriva ladja.
+
+16. get_ship_placement_by_cell(self, placements, row, col)
+Namen: najde, kateri ladji pripada dana celica.
+
+17. mark_player_ship_sunk(self, row, col)
+Namen: preveri, ali je po zadetku igralčeva ladja potopljena.
+Izhod: dolžina potopljene ladje ali None.
+
+18. mark_computer_ship_sunk(self, row, col)
+Namen: preveri, ali je potopljena računalnikova ladja; ob potopu jo razkrije.
+
+19. place_player_ship(self, row, col, direction)
+Namen: izvede postavitev igralčeve ladje in posodobi navodila.
+
+20. start_game(self)
+Namen: začne igro in naključno razporedi računalnikove ladje.
+
+21. player_shoot(self, row, col)
+Namen: izvede igralčev strel, posodobi mreže, preveri potopitev in zmago.
+
+22. delayed_computer_shoot(self, preserve_message=False)
+Namen: časovni zamik pred računalnikovo potezo.
+
+23. computer_shoot(self, preserve_message=False)
+Namen: izvede računalnikov strel in preveri stanje igre.
+
+24. disable_all_buttons(self)
+Namen: zaključi interaktivnost po koncu igre.
+
+**5. Kratek zaključek za seminarsko**
+
+Program je načrtovan modularno: osnovna logika je ločena od grafičnega vmesnika, glavni razred pa povezuje stanje, dogodke in izris. Tak pristop izboljša preglednost kode, poenostavi odpravljanje napak in omogoča nadaljnje nadgradnje, npr. pametnejšo strategijo računalnika ali dodatne vizualne učinke.
+
+Če želiš, ti lahko v naslednjem koraku pripravim še poglavje Testiranje in možne izboljšave v isti obliki za neposredno vključitev v seminarsko.

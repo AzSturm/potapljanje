@@ -1,0 +1,49 @@
+Odlično, spodaj je pripravljeno poglavje Tehnične težave in rešitve, ki ga lahko direktno dodaš v seminarsko.
+
+**Tehnične težave in rešitve**
+
+1. Težava: Prikaz navpičnih ladij iz PNG slik  
+Opis: Pri nekaterih sistemih navpične slike niso bile pravilno podprte brez dodatnih knjižnic.  
+Rešitev: Uporabljena je knjižnica Pillow za rotacijo horizontalne slike ladje v navpično smer. Dodan je tudi rezervni mehanizem za primer, ko Pillow ni na voljo.
+
+2. Težava: Odvisnost od modula tkinter  
+Opis: Program se na Linux sistemih brez tkinter ni zagnal.  
+Rešitev: Dodano je preverjanje ob zagonu in jasno sporočilo za namestitev paketa python3-tk.
+
+3. Težava: Nepravilen slojni prikaz (ladja in ogenj)  
+Opis: Ob potopitvi računalnikove ladje je ogenj izginil, ker je bila ladja narisana čez marker zadetka.  
+Rešitev: Urejeno je vrstno risanje elementov na platnu. Ogenj ostane v ospredju, ladja pa je pod njim.
+
+4. Težava: Prevelika slika ognja  
+Opis: Ogenj je zapolnil skoraj celo celico in zmanjšal preglednost.  
+Rešitev: Velikost ognja je zmanjšana na približno tri četrtine celice in centrirana v sredino.
+
+5. Težava: Podvajanje strelov v isto polje  
+Opis: Brez preverjanja bi bilo mogoče večkrat streljati v isto celico.  
+Rešitev: Pred vsakim strelom se preveri stanje tarčne mreže. Če je polje že uporabljeno, se poteza ignorira.
+
+6. Težava: Razkrivanje računalnikovih ladij prezgodaj  
+Opis: Če bi bile ladje narisane že na začetku, bi bil računalnik v slabšem položaju.  
+Rešitev: Računalnikove ladje ostanejo skrite in se prikažejo šele ob potopitvi.
+
+7. Težava: Stabilnost postavitve GUI  
+Opis: Pri spremembah besedila in elementov bi se lahko okno premikalo.  
+Rešitev: Spodnji del z navodili in gumbom ima fiksno velikost, zato je vmesnik stabilen.
+
+8. Težava: Robni kliki izven mreže  
+Opis: Kliki izven igralnega območja so lahko povzročili napačne izračune koordinat.  
+Rešitev: Dodano je preverjanje koordinat in varno ignoriranje klikov izven dovoljenega območja.
+
+9. Težava: Nejasen potek igre za uporabnika  
+Opis: Brez sprotnih statusov igralec težje sledi dogajanju.  
+Rešitev: Dodana so dinamična tekstovna obvestila (postavljanje, streljanje, potopitev, zmaga).
+
+10. Težava: Prehiter prehod med potezami  
+Opis: Takojšnji računalnikov odgovor je lahko nepregleden.  
+Rešitev: Dodana je kratka časovna zakasnitev računalnikove poteze.
+
+**Kratek zaključek poglavja**
+
+Največ težav je bilo pri grafičnem prikazu in sinhronizaciji logike s prikazom. Z iterativnim testiranjem so bile odpravljene ključne napake, predvsem pri slojih izrisa, prikazu zadetkov in pravilnem zaporedju potez. Končna različica je stabilna, pregledna in funkcionalno skladna s pravili igre Potapljanje ladjic.
+
+Če želiš, pripravim še zadnje poglavje Možne nadgradnje projekta (npr. težavnostne stopnje, pametnejši AI, shranjevanje rezultatov).

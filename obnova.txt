@@ -1,0 +1,11 @@
+Spodaj je kratka obnova, primerna za začetek seminarske naloge ali kot povzetek.
+
+**Kratka obnova**
+
+V seminarski nalogi sem predstavil izdelavo računalniške igre Potapljanje ladjic v programskem jeziku Python. Pri izdelavi sem uporabil knjižnico Tkinter za grafični uporabniški vmesnik in knjižnico Pillow za delo s slikami. Namen projekta je bil izdelati delujočo igro, v kateri igralec postavlja svoje ladje, nato pa igra proti računalniku.
+
+Program omogoča postavljanje ladij, preverjanje pravilnosti postavitve, streljanje na nasprotnikovo mrežo, prikaz zadetkov in zgrešenih strelov ter razglasitev zmagovalca. Posebnost programa je grafični prikaz ladij in zadetkov z uporabo slik, pri čemer so zadetki označeni z ognjem.
+
+V nalogi sem opisal načrtovanje programa, uporabljene tehnologije, potek izdelave, glavne funkcije in možne nadgradnje. Med razvojem sem reševal težave, povezane s prikazom slik, pravilnim potekom igre in preglednostjo grafičnega vmesnika. Projekt mi je omogočil boljše razumevanje programiranja, dela z dogodki in povezovanja logike igre z grafičnim prikazom.
+
+Če želiš, ti lahko pripravim še res zelo kratek povzetek v 5 do 6 stavkih za čisto na začetek seminarske.

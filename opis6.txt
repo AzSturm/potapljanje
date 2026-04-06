@@ -1,0 +1,162 @@
+Spodaj je šolska verzija, pripravljena tako, da jo lahko prilepiš v Word in po potrebi samo še oblikuješ z naslovi.
+
+**SEMINARSKA NALOGA**  
+**Izdelava igre Potapljanje ladjic v programskem jeziku Python**
+
+**1. Uvod**
+
+V tej seminarski nalogi bom predstavil izdelavo računalniške igre Potapljanje ladjic. To je znana strateška igra, pri kateri igralec poskuša potopiti vse nasprotnikove ladje, preden nasprotnik potopi njegove. Igra je zanimiva predvsem zato, ker združuje logično razmišljanje, načrtovanje potez in element naključja.
+
+Za izdelavo programa sem uporabil programski jezik Python. Grafični uporabniški vmesnik sem izdelal s pomočjo knjižnice Tkinter, za delo s slikami pa sem uporabil knjižnico Pillow. Namen naloge je bil izdelati delujoč program, ki omogoča postavljanje ladij, igranje proti računalniku, prikaz zadetkov in razglasitev zmagovalca.
+
+Pri projektu sem želel spoznati, kako se povežejo logika igre, grafični vmesnik in uporabniški vnosi. Poleg tega sem želel izdelati program, ki je pregleden, dovolj enostaven za razumevanje in primeren za nadaljnje nadgradnje.
+
+**2. Namen in cilj naloge**
+
+Namen seminarske naloge je bil izdelati računalniško različico igre Potapljanje ladjic. Program mora uporabniku omogočiti, da postavi svoje ladje na igralno mrežo, nato pa igra proti računalniku, ki svoje ladje postavi naključno.
+
+Cilji naloge so bili:
+1. izdelati logiko za postavljanje ladij,
+2. omogočiti pravilno preverjanje zadetkov in zgrešenih strelov,
+3. izdelati grafični prikaz igralnega polja,
+4. omogočiti izmenično igranje med igralcem in računalnikom,
+5. prikazati konec igre in razglasiti zmagovalca.
+
+Pomemben cilj je bil tudi ta, da je program dovolj pregleden in razumljiv, da ga je mogoče uporabiti kot primer povezovanja programiranja in grafičnega uporabniškega vmesnika.
+
+**3. Uporabljene tehnologije**
+
+Pri izdelavi programa sem uporabil naslednje tehnologije:
+
+**3.1 Python**  
+Python je sodoben programski jezik, ki je primeren za začetnike in tudi za zahtevnejše projekte. Njegova prednost je jasna sintaksa, zaradi katere je program lažje brati in razumeti.
+
+**3.2 Tkinter**  
+Tkinter je standardna knjižnica za izdelavo grafičnih vmesnikov v Pythonu. Uporabil sem jo za ustvarjanje glavnega okna, mrež, besedila, gumbov in zaznavanje klikov miške.
+
+**3.3 Pillow**  
+Pillow je knjižnica za delo s slikami. Uporabil sem jo za nalaganje slik ladij in slike ognja, spreminjanje njihove velikosti in rotacijo slik za navpični prikaz ladij.
+
+**3.4 Random**  
+Modul `random` sem uporabil za naključno postavljanje računalnikovih ladij in za naključno izbiro računalnikovih strelov.
+
+**4. Opis igre**
+
+Potapljanje ladjic je igra za dva igralca. Vsak igralec ima svojo mrežo, na katero postavi ladje različnih dolžin. Igralca nato izmenično ugibata položaj nasprotnikovih ladij tako, da izbirata polja za streljanje. Če igralec zadene ladjo, se to označi kot zadetek. Če zadene vsa polja določene ladje, je ladja potopljena. Zmaga tisti, ki prvi potopi vse nasprotnikove ladje.
+
+V moji različici igre en igralec igra proti računalniku. Igralec svoje ladje postavi ročno, računalnik pa jih razporedi naključno. Ko se igra začne, igralec strelja na računalnikovo mrežo, nato pa sledi računalnikova poteza.
+
+**5. Načrtovanje programa**
+
+Pred začetkom programiranja sem moral določiti, kako bom organiziral podatke in delovanje igre. Program sem zasnoval tako, da sem ločil logiko igre od grafičnega prikaza.
+
+Za delovanje igre uporabljam štiri mreže:
+1. igralčevo glavno mrežo,
+2. računalnikovo glavno mrežo,
+3. igralčevo tarčno mrežo,
+4. računalnikovo tarčno mrežo.
+
+Glavna mreža vsebuje podatke o ladjah. Tarčna mreža pa vsebuje podatke o tem, kam je posamezna stran že streljala. Takšna rešitev je pregledna in poenostavi preverjanje pravil.
+
+Program je večinoma organiziran v razredu `BattleshipGame`, ki skrbi za grafični vmesnik, potek igre in obdelavo dogodkov. Poleg tega vsebuje tudi nekaj pomožnih funkcij za osnovno delo z mrežo.
+
+**6. Opis izdelave programa**
+
+Izdelava programa je potekala postopoma.
+
+Najprej sem pripravil osnovne funkcije za delo z mrežo. Program mora znati ustvariti prazno mrežo, preveriti, ali lahko ladjo postavimo na določeno mesto, jo postaviti v mrežo in preveriti, ali so vse ladje potopljene. S tem sem izdelal osnovni logični del igre.
+
+V naslednjem koraku sem pripravil grafični uporabniški vmesnik. Ustvaril sem glavno okno, dve igralni mreži in spodnji del za navodila ter gumb za začetek igre. Za prikaz mrež sem uporabil platno, saj omogoča risanje črt, slik in drugih grafičnih elementov.
+
+Nato sem dodal postavljanje ladij z miško. Igralec lahko z levim klikom postavi ladjo navpično, z desnim klikom pa vodoravno. Program pri tem preveri, ali je ladja pravilno postavljena in ali se ne prekriva z drugo ladjo.
+
+Po uspešni postavitvi ladij se igra začne. Računalnik naključno razporedi svoje ladje in te ostanejo skrite. Igralec nato izbira polja na računalnikovi mreži, kamor želi streljati.
+
+V nadaljevanju sem dodal še računalnikovo streljanje. Računalnik izbere naključno polje, ki ga še ni uporabil, in preveri, ali je zadel igralčevo ladjo.
+
+Pomemben del izdelave je bil tudi grafični prikaz zadetkov. Zgrešena polja so označena drugače kot zadetki. Pri zadetku se prikaže ogenj. Ko je računalnikova ladja v celoti potopljena, se njena slika pokaže na mreži.
+
+Na koncu sem poskrbel še za prikaz zmagovalca in za to, da se igra po koncu pravilno ustavi.
+
+**7. Navodila za uporabo igre**
+
+Po zagonu programa se odpre okno z dvema mrežama. Leva mreža pripada igralcu, desna pa računalniku.
+
+Igralec mora najprej postaviti svoje ladje. To stori z miško:
+1. levi klik pomeni navpično postavitev ladje,
+2. desni klik pomeni vodoravno postavitev ladje.
+
+Ko so vse ladje postavljene, se aktivira gumb za začetek igre. Po pritisku na gumb se igra začne.
+
+Igralec nato strelja na računalnikovo mrežo tako, da klikne na izbrano polje. Program preveri, ali je bil strel uspešen. Nato sledi računalnikova poteza.
+
+Igra se konča, ko ena stran izgubi vse ladje. Program nato izpiše zmagovalca.
+
+**8. Glavne funkcije programa**
+
+Program vsebuje več pomembnih funkcij.
+
+Funkcija `create_grid(size=10)` ustvari prazno mrežo.  
+Funkcija `can_place_ship(grid, row, col, length, direction)` preveri, ali je ladjo možno postaviti na določeno mesto.  
+Funkcija `place_ship(grid, row, col, length, direction)` zapiše ladjo v mrežo.  
+Funkcija `all_ships_sunk(grid)` preveri, ali so vse ladje že potopljene.
+
+V razredu `BattleshipGame` so pomembne predvsem metode za prikaz mreže, zaznavanje klikov, nalaganje slik, risanje ladij, prikaz zadetkov, izvajanje potez in zaključek igre.
+
+Posebej pomembne so:
+1. `draw_grid`, ki nariše mrežo,
+2. `draw_ship`, ki prikaže ladjo,
+3. `draw_shot_marker`, ki prikaže zadetek ali zgrešeno polje,
+4. `player_shoot`, ki obdela igralčev strel,
+5. `computer_shoot`, ki obdela računalnikov strel.
+
+**9. Tehnične težave in rešitve**
+
+Med izdelavo programa sem naletel na več težav.
+
+Prva težava je bila pravilna uporaba slik. Ker sem želel, da so ladje prikazane tako vodoravno kot navpično, sem moral zagotoviti rotacijo slik. To sem rešil s knjižnico Pillow.
+
+Druga težava je bila povezana s prikazom zadetkov. Ogenj se je moral prikazati na pravilnem mestu in ostati viden tudi takrat, ko se je pokazala potopljena ladja. To sem rešil tako, da sem uredil pravilen vrstni red risanja elementov na platnu.
+
+Tretja težava je bila velikost slike ognja. Na začetku je bila prevelika, zato sem jo zmanjšal in postavil v sredino celice.
+
+Paziti sem moral tudi na to, da ni mogoče večkrat klikniti na isto polje in da računalnikove ladje ostanejo skrite do trenutka, ko so potopljene.
+
+**10. Možne nadgradnje**
+
+Program bi bilo mogoče še izboljšati na več načinov.
+
+Najbolj zanimiva nadgradnja bi bila pametnejša umetna inteligenca. Trenutno računalnik izbira polja naključno, lahko pa bi si zapomnil zadetke in nato streljal v sosednja polja.
+
+Možna je tudi uvedba različnih težavnostnih stopenj, da bi bila igra primerna za več različnih uporabnikov.
+
+Dodati bi bilo mogoče še:
+1. zvočne učinke,
+2. začetni meni,
+3. shranjevanje rezultatov,
+4. igro med dvema igralcema,
+5. večjo izbiro nastavitev, kot so velikost mreže ali število ladij.
+
+Z vidika razvoja programa bi bila koristna tudi razdelitev kode v več datotek, saj bi s tem program postal še bolj pregleden.
+
+**11. Zaključek**
+
+Pri izdelavi igre Potapljanje ladjic sem spoznal, kako lahko s programskim jezikom Python izdelamo interaktivno grafično aplikacijo. Projekt mi je omogočil uporabo različnih programskih znanj, kot so delo s seznami, pogoji, zankami, funkcijami, razredi, dogodki in grafičnim uporabniškim vmesnikom.
+
+Končni program omogoča vse osnovne funkcije igre: postavljanje ladij, igranje proti računalniku, prikaz zadetkov in konec igre. Poleg tega je program dovolj pregleden, da ga je mogoče brez večjih težav še naprej izboljševati.
+
+Menim, da je projekt uspešno dosegel svoj namen, saj sem izdelal delujočo igro in pri tem pridobil veliko praktičnega znanja o načrtovanju in izdelavi programov.
+
+**12. Literatura in viri**
+
+1. Python Documentation
+2. Tkinter Documentation
+3. Pillow Documentation
+4. Lastno razviti program
+5. Lastno testiranje programa
+
+Če želiš, ti lahko še takoj pripravim:
+1. naslovnico za seminarsko,
+2. kazalo poglavij,
+3. kratko obnovo oziroma povzetek,
+4. zahvalo ali izjavo o avtorstvu.

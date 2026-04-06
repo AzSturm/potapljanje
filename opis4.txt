@@ -1,0 +1,68 @@
+Spodaj je še zadnje poglavje za seminarsko.
+
+**Možne nadgradnje projekta**
+
+Program v trenutni obliki uspešno omogoča igranje igre Potapljanje ladjic, vendar bi ga bilo mogoče v prihodnje še precej nadgraditi. Največ možnosti za izboljšave je pri umetni inteligenci, uporabniškem vmesniku in dodatnih funkcionalnostih.
+
+1. Pametnejša umetna inteligenca
+Trenutno računalnik izbira polja za streljanje naključno. Ena izmed najpomembnejših nadgradenj bi bila izdelava pametnejšega algoritma, ki bi si zapomnil prejšnje zadetke in po uspešnem zadetku streljal v sosednja polja. Tako bi bil računalnik bolj podoben pravemu igralcu in igra bi postala zahtevnejša.
+
+2. Izbira težavnostne stopnje
+Dodati bi bilo mogoče več težavnostnih stopenj. Pri lahki stopnji bi računalnik streljal povsem naključno, pri srednji bi delno upošteval prejšnje zadetke, pri težki pa bi uporabljal bolj napredno strategijo iskanja ladij.
+
+3. Boljša pravila postavljanja ladij
+V trenutni različici se ladje ne smejo prekrivati, lahko pa se dotikajo. Nadgradnja bi lahko uvedla pravilo, da morajo biti ladje med seboj ločene vsaj za eno polje, kar je pogosto pravilo v klasičnih različicah igre.
+
+4. Več vizualnih učinkov
+Grafični prikaz bi bilo mogoče izboljšati z dodatnimi animacijami, na primer:
+1. animiran eksplozijski učinek ob zadetku,
+2. drugačen prikaz ob zgrešenem strelu,
+3. utripajoče obvestilo ob potopljeni ladji,
+4. lepši prikaz konca igre.
+
+5. Zvočni učinki
+Za boljšo uporabniško izkušnjo bi se lahko dodali zvoki za:
+1. zadetek,
+2. zgrešen strel,
+3. potopitev ladje,
+4. zmago ali poraz.
+S tem bi bila igra bolj dinamična in zanimiva.
+
+6. Meni in začetni zaslon
+Projekt bi lahko dobil uvodni meni, kjer bi igralec izbral:
+1. začetek nove igre,
+2. težavnost,
+3. velikost mreže,
+4. izhod iz programa.
+To bi program naredilo bolj podoben pravi samostojni igri.
+
+7. Shranjevanje rezultatov
+Dodati bi bilo mogoče sistem beleženja rezultatov, na primer:
+1. število zmag in porazov,
+2. število potez do zmage,
+3. najboljši rezultat,
+4. zgodovino odigranih iger.
+
+8. Igranje med dvema igralcema
+Namesto igre proti računalniku bi bila možna tudi nadgradnja za dva igralca na istem računalniku. V tem primeru bi bilo treba dodati izmenjavo zaslona ali skrivanje ladij med potezama.
+
+9. Nastavljiva velikost mreže in število ladij
+Trenutno je mreža velikosti 10 x 10 in uporablja vnaprej določene ladje. V prihodnje bi lahko igralec sam izbral:
+1. velikost mreže,
+2. število ladij,
+3. dolžine ladij.
+To bi povečalo prilagodljivost programa.
+
+10. Čistejša razdelitev kode
+Ker je program trenutno zapisan v eni datoteki, bi bila dobra programska nadgradnja razdelitev na več modulov:
+1. logika igre,
+2. grafični vmesnik,
+3. nalaganje slik,
+4. umetna inteligenca.
+Takšna razdelitev bi izboljšala preglednost, vzdrževanje in nadaljnji razvoj.
+
+**Zaključek poglavja**
+
+Projekt ima dobro osnovo za nadaljnji razvoj, saj že vsebuje ločeno logiko mrež, postavljanja ladij, streljanja in grafičnega prikaza. Najbolj smiselne prihodnje nadgradnje bi bile pametnejši računalniški nasprotnik, več nastavitev za igralca ter dodatne vizualne in zvočne izboljšave. S tem bi program iz enostavne šolske aplikacije lahko prerasel v precej bolj dodelano igro.
+
+Če želiš, ti lahko zdaj iz vsega skupaj sestavim še lepo celotno strukturo seminarske naloge po poglavjih od uvoda do zaključka.
