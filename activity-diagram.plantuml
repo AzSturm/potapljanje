@@ -1,0 +1,52 @@
+@startuml
+title Activity Diagram - Potapljanje ladjic
+
+start
+
+:Zagon aplikacije;
+:Inicializacija razreda BattleshipGame;
+:Ustvarjanje igralnih mrež;
+:Prikaz uporabniškega vmesnika;
+
+repeat
+  :Igralec izbere polje in smer;
+  :Postavitev ladje;
+repeat while (Vse ladje postavljene?) is (ne)
+
+:Omogoči gumb Začni igro;
+:Igralec začne igro;
+:Računalnik naključno postavi ladje;
+
+repeat
+  :Igralec izvede strel;
+
+  if (Zadetek?) then (da)
+    :Označi zadetek;
+    :Preveri potopitev ladje;
+  else (ne)
+    :Označi zgrešen strel;
+  endif
+
+  if (Vse računalnikove ladje potopljene?) then (da)
+    :Prikaži zmagovalca Igralec;
+    stop
+  endif
+
+  :Računalnik izvede strel;
+
+  if (Zadetek igralca?) then (da)
+    :Označi zadetek;
+    :Preveri potopitev ladje;
+  else (ne)
+    :Označi zgrešen strel;
+  endif
+
+  if (Vse igralčeve ladje potopljene?) then (da)
+    :Prikaži zmagovalca Računalnik;
+    stop
+  endif
+
+repeat while (Igra končana?) is (ne)
+
+stop
+@enduml

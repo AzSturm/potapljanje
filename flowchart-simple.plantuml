@@ -1,0 +1,30 @@
+@startuml
+title Diagram poteka - poenostavljena verzija
+
+start
+:Zaženi igro;
+:Igralec postavi ladje;
+
+if (So vse ladje postavljene?) then (da)
+  :Začni igro;
+  :Računalnik postavi ladje;
+else (ne)
+  :Nadaljuj postavljanje;
+endif
+
+while (Igra še poteka?) is (da)
+  :Igralec strelja;
+  if (Računalnik poražen?) then (da)
+    :Zmaga igralec;
+    stop
+  endif
+
+  :Računalnik strelja;
+  if (Igralec poražen?) then (da)
+    :Zmaga računalnik;
+    stop
+  endif
+endwhile (ne)
+
+stop
+@enduml

@@ -1,0 +1,19 @@
+@startuml
+class BattleshipGame {
+  - player_primary_grid
+  - computer_primary_grid
+  - player_target_grid
+  - computer_target_grid
+  - ships
+  - current_ship_index
+  - game_started
+  - game_over
+
+  + __init__(root)
+  + place_player_ship(row, col, direction)
+  + start_game()
+  + player_shoot(row, col)
+  + computer_shoot(preserve_message=False)
+  + disable_all_buttons()
+}
+@enduml

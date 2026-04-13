@@ -1,0 +1,30 @@
+@startuml
+left to right direction
+
+actor "Igralec" as Player
+
+rectangle "Sistem Potapljanje ladjic" {
+  usecase "Zažene aplikacijo" as UC1
+  usecase "Postavi svoje ladje" as UC2
+  usecase "Začne igro" as UC3
+  usecase "Izvede strel" as UC4
+  usecase "Spremlja potek igre" as UC5
+  usecase "Prikaže zmagovalca" as UC6
+
+  usecase "Naključno postavi računalnikove ladje" as UC7
+  usecase "Preveri zadetek ali zgrešen strel" as UC8
+  usecase "Preveri konec igre" as UC9
+}
+
+Player --> UC1
+Player --> UC2
+Player --> UC3
+Player --> UC4
+Player --> UC5
+Player --> UC6
+
+UC3 .> UC7 : <<include>>
+UC4 .> UC8 : <<include>>
+UC4 .> UC9 : <<include>>
+UC6 .> UC9 : <<extend>>
+@enduml

@@ -165,6 +165,11 @@ class BattleshipGame:
             + self.board_w_px
             + self.outer_pad_x
         )
+        self.instructions_w_px = self.ui_total_w_px + 20
+
+        # Rahlo povecaj zacetno okno in prostor za navodila, da se besedilo izpise do konca.
+        self.root.geometry(f"{self.instructions_w_px}x360")
+        self.root.minsize(self.instructions_w_px, 360)
 
         # Naloži slike ladij (ena slika čez več celic, tudi navpično).
         self.ship_images = self.load_ship_images()
@@ -210,7 +215,7 @@ class BattleshipGame:
 
         # Spodnji del (navodila + gumb) ima fiksno širino in dovolj višine,
         # da se okno ne spreminja in da je gumb vedno viden.
-        self.bottom_frame = tk.Frame(root, width=self.ui_total_w_px, height=90)
+        self.bottom_frame = tk.Frame(root, width=self.instructions_w_px, height=90)
         self.bottom_frame.grid(row=1, column=0, sticky="w")
         self.bottom_frame.grid_propagate(False)
 
@@ -223,7 +228,7 @@ class BattleshipGame:
             ),
             justify="left",
             anchor="w",
-            wraplength=self.ui_total_w_px,
+            wraplength=self.instructions_w_px,
         )
         self.instructions.grid(row=0, column=0, sticky="w", padx=(self.outer_pad_x, self.outer_pad_x), pady=(6, 2))
 

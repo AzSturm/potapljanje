@@ -1,0 +1,27 @@
+@startuml
+title Diagram poteka - priprava igre
+
+start
+:Začetek programa;
+:Ustvari 4 mreže
+(igralec primarna, računalnik primarna,
+igralec ciljna, računalnik ciljna);
+:Inicializiraj stanje igre;
+:Prikaži okno in navodila;
+
+while (So vse igralčeve ladje postavljene?) is (ne)
+  :Klik na igralčevo mrežo;
+  :Določi vrstico in stolpec;
+  :Preveri veljavnost postavitve;
+  if (Postavitev veljavna?) then (da)
+    :Postavi ladjo;
+    :Posodobi navodila;
+  else (ne)
+    :Prikaži napako;
+  endif
+endwhile (da)
+
+:Omogoči začetek igre;
+:Naključno postavi računalnikove ladje;
+stop
+@enduml

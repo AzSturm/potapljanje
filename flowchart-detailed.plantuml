@@ -1,0 +1,77 @@
+@startuml
+title Diagram poteka - podrobna verzija (glej tudi ločena diagrama)
+
+start
+
+partition "Priprava igre" {
+  :Začetek programa;
+  :Ustvari 4 mreže
+  (igralec primarna, računalnik primarna,
+  igralec ciljna, računalnik ciljna);
+  :Inicializiraj stanje igre;
+  :Prikaži okno in navodila;
+
+  while (So vse igralčeve ladje postavljene?) is (ne)
+    :Klik na igralčevo mrežo;
+    :Določi vrstico in stolpec;
+    :Preveri veljavnost postavitve;
+    if (Postavitev veljavna?) then (da)
+      :Postavi ladjo;
+      :Posodobi navodila;
+    else (ne)
+      :Prikaži napako;
+    endif
+  endwhile (da)
+
+  :Omogoči začetek igre;
+  :Naključno postavi računalnikove ladje;
+}
+
+partition "Potek igre" {
+  while (Igra končana?) is (ne)
+    :Igralec klikne na računalnikovo mrežo;
+    :Izvede se player_shoot;
+
+    if (Polje že obstreljeno?) then (da)
+      :Ignoriraj klik;
+    else (ne)
+      if (Na polju je ladja?) then (da)
+        :Označi zadetek;
+        :Posodobi mrežo;
+        :Preveri, ali je ladja potopljena;
+      else (ne)
+        :Označi zgrešen strel;
+      endif
+    endif
+
+    if (Vse računalnikove ladje potopljene?) then (da)
+      :Nastavi zmagovalca na Igralec;
+      :Onemogoči nadaljnje poteze;
+      :Prikaži konec igre;
+      stop
+    endif
+
+    :Računalnik naključno izbere polje;
+    :Izvede se computer_shoot;
+
+    if (Na polju je igralčeva ladja?) then (da)
+      :Označi zadetek;
+      :Posodobi mrežo;
+      :Preveri, ali je ladja potopljena;
+    else (ne)
+      :Označi zgrešen strel;
+    endif
+
+    if (Vse igralčeve ladje potopljene?) then (da)
+      :Nastavi zmagovalca na Računalnik;
+      :Onemogoči nadaljnje poteze;
+      :Prikaži konec igre;
+      stop
+    endif
+  endwhile (da)
+}
+
+:Onemogoči nadaljnje poteze;
+:Prikaži konec igre;
+stop
+@enduml
