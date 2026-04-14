@@ -24,7 +24,7 @@ except Exception:
     ImageTk = None
 
 # Ustvari prazno igralno polje
-def create_grid(size=10):
+def ustvariMrezo(size=10):
     """Ustvari prazno kvadratno mrezo za igro.
 
     Parametri:
@@ -36,7 +36,7 @@ def create_grid(size=10):
     return [[0 for _ in range(size)] for _ in range(size)]
 
 # Preveri, ali je ladjico možno postaviti na mrežo
-def can_place_ship(grid, row, col, length, direction):
+def lahkoPostavisLadjo(grid, row, col, length, direction):
     """Preveri, ali je ladjo mogoce postaviti na izbrano mesto.
 
     Parametri:
@@ -59,7 +59,7 @@ def can_place_ship(grid, row, col, length, direction):
         return all(grid[row + i][col] == 0 for i in range(length))
 
 
-def placement_block_reason(grid, row, col, length, direction):
+def razlogBlokadePostavitve(grid, row, col, length, direction):
     """Vrne razlog, zakaj ladje ni mogoce postaviti na izbrano mesto.
 
     Parametri:
@@ -87,7 +87,7 @@ def placement_block_reason(grid, row, col, length, direction):
     return "neznana smer"
 
 # Postavi ladjico na mrežo
-def place_ship(grid, row, col, length, direction):
+def postaviLadjo(grid, row, col, length, direction):
     """V mrezo zapise ladjo na podano mesto in v podani smeri.
 
     Parametri:
@@ -105,7 +105,7 @@ def place_ship(grid, row, col, length, direction):
             grid[row + i][col] = 1
 
 # Preveri, ali so vse ladjice potopljene
-def all_ships_sunk(grid):
+def vseLadjePotopljene(grid):
     """Preveri, ali na mrezi ni vec nepoškodovanih ladij.
 
     Parametri:
@@ -117,7 +117,7 @@ def all_ships_sunk(grid):
     return all(cell != 1 for row in grid for cell in row)
 
 # Glavni razred za grafični vmesnik
-class BattleshipGame:
+class IgraPotapljanje:
     """Glavni razred, ki upravlja logiko igre in graficni vmesnik."""
 
     def __init__(self, root):
@@ -130,10 +130,10 @@ class BattleshipGame:
         self.root.title("Potapljanje ladjic")
 
         # Ustvari mreži za igralca in računalnik
-        self.player_primary_grid = create_grid()
-        self.computer_primary_grid = create_grid()
-        self.player_target_grid = create_grid()
-        self.computer_target_grid = create_grid()
+        self.player_primary_grid = ustvariMrezo()
+        self.computer_primary_grid = ustvariMrezo()
+        self.player_target_grid = ustvariMrezo()
+        self.computer_target_grid = ustvariMrezo()
 
         # Ladjice za postavitev
         self.ships = [5, 4, 3, 3, 2]
@@ -172,8 +172,8 @@ class BattleshipGame:
         self.root.minsize(self.instructions_w_px, 360)
 
         # Naloži slike ladij (ena slika čez več celic, tudi navpično).
-        self.ship_images = self.load_ship_images()
-        self.fire_image = self.load_fire_image()
+        self.ship_images = self.naloziSlikeLadij()
+        self.fire_image = self.naloziSlikoOgnja()
 
         # Stabilen layout: 3 stolpci (igralec | ločnica | računalnik).
         self.board_frame = tk.Frame(root)
@@ -188,10 +188,10 @@ class BattleshipGame:
             highlightthickness=0,
         )
         self.player_canvas.grid(row=1, column=0, padx=(self.outer_pad_x, 0), sticky="w")
-        self.draw_grid(self.player_canvas, water_color="blue")
-        self.player_canvas.bind("<Button-1>", lambda e: self.on_player_canvas_click(e, "V"))
-        self.player_canvas.bind("<Button-3>", lambda e: self.on_player_canvas_click(e, "H"))
-        self.player_canvas.bind("<Button-2>", lambda e: self.on_player_canvas_click(e, "H"))
+        self.narisiMrezo(self.player_canvas, water_color="blue")
+        self.player_canvas.bind("<Button-1>", lambda e: self.obKlikuIgralcevegaPlatna(e, "V"))
+        self.player_canvas.bind("<Button-3>", lambda e: self.obKlikuIgralcevegaPlatna(e, "H"))
+        self.player_canvas.bind("<Button-2>", lambda e: self.obKlikuIgralcevegaPlatna(e, "H"))
 
         # Vizualna ločnica med mrežama.
         tk.Frame(self.board_frame, bg="black", width=self.separator_w_px).grid(
@@ -210,8 +210,8 @@ class BattleshipGame:
             highlightthickness=0,
         )
         self.computer_canvas.grid(row=1, column=2, padx=(0, self.outer_pad_x), sticky="w")
-        self.draw_grid(self.computer_canvas, water_color="green")
-        self.computer_canvas.bind("<Button-1>", self.on_computer_canvas_click)
+        self.narisiMrezo(self.computer_canvas, water_color="green")
+        self.computer_canvas.bind("<Button-1>", self.obKlikuRacunalnikovegaPlatna)
 
         # Spodnji del (navodila + gumb) ima fiksno širino in dovolj višine,
         # da se okno ne spreminja in da je gumb vedno viden.
@@ -233,14 +233,14 @@ class BattleshipGame:
         self.instructions.grid(row=0, column=0, sticky="w", padx=(self.outer_pad_x, self.outer_pad_x), pady=(6, 2))
 
         # Gumb za začetek igre
-        self.start_button = tk.Button(self.bottom_frame, text="Začni igro", state="disabled", command=self.start_game)
+        self.start_button = tk.Button(self.bottom_frame, text="Začni igro", state="disabled", command=self.zacniIgro)
         self.start_button.grid(row=1, column=0, sticky="w", padx=(self.outer_pad_x, self.outer_pad_x), pady=(0, 6))
 
         self.player_shot_markers = {}
         self.computer_shot_markers = {}
         self.revealed_computer_ships = set()
 
-    def draw_grid(self, canvas, water_color):
+    def narisiMrezo(self, canvas, water_color):
         """Narise ozadje mreze in vse crte mreze na podano platno.
 
         Parametri:
@@ -257,7 +257,7 @@ class BattleshipGame:
             canvas.create_line(x, 0, x, h, fill="black")
             canvas.create_line(0, y, w, y, fill="black")
 
-    def event_to_cell(self, event):
+    def dogodekVCelico(self, event):
         """Pretvori polozaj klika miske v koordinate celice mreze.
 
         Parametri:
@@ -272,7 +272,7 @@ class BattleshipGame:
             return row, col
         return None
 
-    def on_player_canvas_click(self, event, direction):
+    def obKlikuIgralcevegaPlatna(self, event, direction):
         """Obdela klik igralca pri postavljanju ladij.
 
         Parametri:
@@ -285,7 +285,7 @@ class BattleshipGame:
         if self.game_started or self.game_over:
             return "break"
 
-        cell = self.event_to_cell(event)
+        cell = self.dogodekVCelico(event)
         if cell is None:
             self.instructions.config(text="Klik izven mreže.")
             return "break"
@@ -294,13 +294,13 @@ class BattleshipGame:
         try:
             # Pomaga pri diagnostiki, če klik/vezava ne deluje.
             #self.instructions.config(text=f"Klik: ({row}, {col}), smer={direction}")
-            self.place_player_ship(row, col, direction)
+            self.postaviIgralcevoLadjo(row, col, direction)
         except Exception as exc:
             self.instructions.config(text=f"Napaka pri kliku: {type(exc).__name__}: {exc}")
 
         return "break"
 
-    def on_computer_canvas_click(self, event):
+    def obKlikuRacunalnikovegaPlatna(self, event):
         """Obdela klik na racunalnikovo mrezo med igralcevo potezo.
 
         Parametri:
@@ -311,14 +311,14 @@ class BattleshipGame:
         """
         if (not self.game_started) or self.game_over or self.waiting_for_computer_shot:
             return "break"
-        cell = self.event_to_cell(event)
+        cell = self.dogodekVCelico(event)
         if cell is None:
             return "break"
         row, col = cell
-        self.player_shoot(row, col)
+        self.igralecStrelja(row, col)
         return "break"
 
-    def load_ship_images(self, hit_variant=False):
+    def naloziSlikeLadij(self, hit_variant=False):
         """Nalozi slike ladij in jih prilagodi velikosti mreze.
 
         Parametri:
@@ -410,7 +410,7 @@ class BattleshipGame:
 
         return images
 
-    def load_fire_image(self):
+    def naloziSlikoOgnja(self):
         """Nalozi in pomanjsa sliko ognja za prikaz zadetka.
 
         Vrne:
@@ -447,7 +447,7 @@ class BattleshipGame:
 
         return fire
 
-    def draw_ship(self, canvas, row, col, ship_length, direction, tag):
+    def narisiLadjo(self, canvas, row, col, ship_length, direction, tag):
         """Narise ladjo na podano platno in uredi njene sloje.
 
         Parametri:
@@ -494,7 +494,7 @@ class BattleshipGame:
         canvas.tag_raise("shot")
         canvas.tag_lower("shot_under", "ship")
 
-    def draw_shot_marker(self, canvas, marker_dict, row, col, hit):
+    def narisiOznakoStrela(self, canvas, marker_dict, row, col, hit):
         """Narise oznako strela kot ogenj ali zgreseno polje.
 
         Parametri:
@@ -530,7 +530,7 @@ class BattleshipGame:
         color = "red" if hit else "white"
         marker_dict[key] = canvas.create_rectangle(x1, y1, x2, y2, fill=color, outline="black", tags=("shot",))
 
-    def get_ship_cells(self, row, col, ship_length, direction):
+    def pridobiCeliceLadje(self, row, col, ship_length, direction):
         """Vrne seznam vseh celic, ki jih pokriva ladja.
 
         Parametri:
@@ -546,7 +546,7 @@ class BattleshipGame:
             return [(row, col + i) for i in range(ship_length)]
         return [(row + i, col) for i in range(ship_length)]
 
-    def get_ship_placement_by_cell(self, placements, row, col):
+    def pridobiPostavitevLadjePoCelici(self, placements, row, col):
         """Poisce ladjo, ki zaseda podano celico.
 
         Parametri:
@@ -558,11 +558,11 @@ class BattleshipGame:
             Podatke o ladji ali None, ce celica ne pripada nobeni ladji.
         """
         for idx, (ship_row, ship_col, ship_length, direction) in enumerate(placements):
-            if (row, col) in self.get_ship_cells(ship_row, ship_col, ship_length, direction):
+            if (row, col) in self.pridobiCeliceLadje(ship_row, ship_col, ship_length, direction):
                 return idx, ship_row, ship_col, ship_length, direction
         return None
 
-    def mark_player_ship_sunk(self, row, col):
+    def oznaciIgralcevoPotopljenoLadjo(self, row, col):
         """Preveri, ali je bila igralceva ladja po zadetku potopljena.
 
         Parametri:
@@ -572,17 +572,17 @@ class BattleshipGame:
         Vrne:
             Dolzino potopljene ladje ali None.
         """
-        ship_info = self.get_ship_placement_by_cell(self.player_ship_placements, row, col)
+        ship_info = self.pridobiPostavitevLadjePoCelici(self.player_ship_placements, row, col)
         if ship_info is None:
             return None
 
         _, ship_row, ship_col, ship_length, direction = ship_info
-        ship_cells = self.get_ship_cells(ship_row, ship_col, ship_length, direction)
+        ship_cells = self.pridobiCeliceLadje(ship_row, ship_col, ship_length, direction)
         if not all(self.player_primary_grid[r][c] == -1 for r, c in ship_cells):
             return None
         return ship_length
 
-    def mark_computer_ship_sunk(self, row, col):
+    def oznaciRacunalnikovoPotopljenoLadjo(self, row, col):
         """Preveri, ali je bila racunalnikova ladja potopljena, in jo razkrije.
 
         Parametri:
@@ -592,7 +592,7 @@ class BattleshipGame:
         Vrne:
             Dolzino potopljene ladje ali None.
         """
-        ship_info = self.get_ship_placement_by_cell(self.computer_ship_placements, row, col)
+        ship_info = self.pridobiPostavitevLadjePoCelici(self.computer_ship_placements, row, col)
         if ship_info is None:
             return None
 
@@ -600,7 +600,7 @@ class BattleshipGame:
         if idx in self.revealed_computer_ships:
             return None
 
-        ship_cells = self.get_ship_cells(ship_row, ship_col, ship_length, direction)
+        ship_cells = self.pridobiCeliceLadje(ship_row, ship_col, ship_length, direction)
         if not all(self.computer_primary_grid[r][c] == -1 for r, c in ship_cells):
             return None
 
@@ -641,7 +641,7 @@ class BattleshipGame:
         return ship_length
 
     # Postavi ladjico igralca
-    def place_player_ship(self, row, col, direction):
+    def postaviIgralcevoLadjo(self, row, col, direction):
         """Poskusi postaviti trenutno igralcevo ladjo na izbrano mesto.
 
         Parametri:
@@ -654,10 +654,10 @@ class BattleshipGame:
 
         ship_length = self.ships[self.current_ship_index]
 
-        if can_place_ship(self.player_primary_grid, row, col, ship_length, direction):
-            place_ship(self.player_primary_grid, row, col, ship_length, direction)
+        if lahkoPostavisLadjo(self.player_primary_grid, row, col, ship_length, direction):
+            postaviLadjo(self.player_primary_grid, row, col, ship_length, direction)
             self.player_ship_placements.append((row, col, ship_length, direction))
-            self.draw_ship(self.player_canvas, row, col, ship_length, direction, tag=f"player_ship_{self.current_ship_index}")
+            self.narisiLadjo(self.player_canvas, row, col, ship_length, direction, tag=f"player_ship_{self.current_ship_index}")
 
             self.current_ship_index += 1
             if self.current_ship_index < len(self.ships):
@@ -671,12 +671,12 @@ class BattleshipGame:
                 self.instructions.config(text="Vse ladjice so postavljene!")
                 self.start_button.config(state="normal")
         else:
-            reason = placement_block_reason(self.player_primary_grid, row, col, ship_length, direction)
+            reason = razlogBlokadePostavitve(self.player_primary_grid, row, col, ship_length, direction)
             suffix = f" ({reason})" if reason else ""
             self.instructions.config(text=f"Ladjice ni mogoče postaviti tukaj{suffix}. Poskusi znova.")
 
     # Začni igro
-    def start_game(self):
+    def zacniIgro(self):
         """Zacne igro in nakljucno postavi vse racunalnikove ladje."""
         self.instructions.config(text="Igra se je začela! Klikni na računalnikovo mrežo za streljanje.")
         self.game_started = True
@@ -687,15 +687,15 @@ class BattleshipGame:
                 row = random.randint(0, 9)
                 col = random.randint(0, 9)
                 direction = random.choice(["H", "V"])
-                if can_place_ship(self.computer_primary_grid, row, col, ship_length, direction):
-                    place_ship(self.computer_primary_grid, row, col, ship_length, direction)
+                if lahkoPostavisLadjo(self.computer_primary_grid, row, col, ship_length, direction):
+                    postaviLadjo(self.computer_primary_grid, row, col, ship_length, direction)
                     self.computer_ship_placements.append((row, col, ship_length, direction))
                     break
 
         # Računalnikove ladje ostanejo skrite; rišemo samo zadetke/zgrešene strele.
 
     # Igralec strelja
-    def player_shoot(self, row, col):
+    def igralecStrelja(self, row, col):
         """Izvede igralcev strel na racunalnikovo mrezo.
 
         Parametri:
@@ -706,47 +706,47 @@ class BattleshipGame:
             return  # Polje je že zadeto
         sunk_length = None
         if self.computer_primary_grid[row][col] == 1:
-            self.draw_shot_marker(self.computer_canvas, self.computer_shot_markers, row, col, hit=True)
+            self.narisiOznakoStrela(self.computer_canvas, self.computer_shot_markers, row, col, hit=True)
             self.player_target_grid[row][col] = 1
             self.computer_primary_grid[row][col] = -1
-            sunk_length = self.mark_computer_ship_sunk(row, col)
+            sunk_length = self.oznaciRacunalnikovoPotopljenoLadjo(row, col)
             if sunk_length is not None:
                 sunk_message = f"Potopljena računalnikova ladja dolžine {sunk_length}"
                 print(sunk_message, flush=True)
                 self.instructions.config(text=sunk_message)
                 self.root.update_idletasks()
         else:
-            self.draw_shot_marker(self.computer_canvas, self.computer_shot_markers, row, col, hit=False)
+            self.narisiOznakoStrela(self.computer_canvas, self.computer_shot_markers, row, col, hit=False)
             self.player_target_grid[row][col] = -1
 
-        if all_ships_sunk(self.computer_primary_grid):
+        if vseLadjePotopljene(self.computer_primary_grid):
             winner_message = "Zmagovalec: Igralec"
             print(winner_message)
             self.instructions.config(text=winner_message)
-            self.disable_all_buttons()
+            self.onemogociVseGumbe()
             return
 
         self.waiting_for_computer_shot = True
         if sunk_length is not None:
             # Pusti sporočilo potopitve vidno na istem mestu kot navodila.
-            self.root.after(3000, lambda: self.delayed_computer_shoot(preserve_message=True))
+            self.root.after(3000, lambda: self.zakasnjenRacunalnikovStrel(preserve_message=True))
             return
 
-        self.root.after(300, lambda: self.delayed_computer_shoot(preserve_message=False))
+        self.root.after(300, lambda: self.zakasnjenRacunalnikovStrel(preserve_message=False))
 
-    def delayed_computer_shoot(self, preserve_message=False):
+    def zakasnjenRacunalnikovStrel(self, preserve_message=False):
         """Z zamikom sprozi racunalnikov strel in sprosti cakanje na potezo.
 
         Parametri:
             preserve_message: Ce je True, ohrani trenutno sporocilo navodil.
         """
         try:
-            self.computer_shoot(preserve_message=preserve_message)
+            self.racunalnikStrelja(preserve_message=preserve_message)
         finally:
             self.waiting_for_computer_shot = False
 
     # Računalnik strelja
-    def computer_shoot(self, preserve_message=False):
+    def racunalnikStrelja(self, preserve_message=False):
         """Izvede racunalnikov nakljucni strel na igralcevo mrezo.
 
         Parametri:
@@ -759,21 +759,21 @@ class BattleshipGame:
             col = random.randint(0, 9)
             if self.computer_target_grid[row][col] == 0:
                 if self.player_primary_grid[row][col] == 1:
-                    self.draw_shot_marker(self.player_canvas, self.player_shot_markers, row, col, hit=True)
+                    self.narisiOznakoStrela(self.player_canvas, self.player_shot_markers, row, col, hit=True)
                     self.computer_target_grid[row][col] = 1
                     self.player_primary_grid[row][col] = -1
-                    sunk_length = self.mark_player_ship_sunk(row, col)
+                    sunk_length = self.oznaciIgralcevoPotopljenoLadjo(row, col)
                 else:
-                    self.draw_shot_marker(self.player_canvas, self.player_shot_markers, row, col, hit=False)
+                    self.narisiOznakoStrela(self.player_canvas, self.player_shot_markers, row, col, hit=False)
                     self.computer_target_grid[row][col] = -1
                     sunk_length = None
                 break
 
-        if all_ships_sunk(self.player_primary_grid):
+        if vseLadjePotopljene(self.player_primary_grid):
             winner_message = "Zmagovalec: Računalnik"
             print(winner_message)
             self.instructions.config(text=winner_message)
-            self.disable_all_buttons()
+            self.onemogociVseGumbe()
             return
 
         if sunk_length is not None:
@@ -786,7 +786,7 @@ class BattleshipGame:
             self.instructions.config(text="Tvoj na vrsti! Klikni na računalnikovo mrežo.")
 
     # Onemogoči vse gumbe (po koncu igre)
-    def disable_all_buttons(self):
+    def onemogociVseGumbe(self):
         """Oznaci igro kot zakljuceno in onemogoci nadaljnje poteze."""
         self.game_over = True
 
@@ -800,5 +800,5 @@ if __name__ == "__main__":
             "(npr. nastavljena spremenljivka DISPLAY) in da je nameščen python3-tk."
         ) from exc
 
-    game = BattleshipGame(root)
+    game = IgraPotapljanje(root)
     root.mainloop()
